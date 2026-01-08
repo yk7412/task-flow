@@ -1,0 +1,49 @@
+
+.todo-item {
+
+    &.completed .ant-input-disabled {
+        text-decoration: line-through;
+    }
+
+    .todo-item-task {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+        
+        .todo-item-icon {
+            color: #9E9E9E;
+            cursor: pointer;
+            margin-right: 5px;
+
+            &:hover {
+                color: #616161;
+            }
+
+            >svg {
+                fill: currentColor;
+            }
+        }
+
+        .todo-item-collapsed {
+            transform: rotate(0deg);
+            transition: transform 0.1s ease
+        }
+
+        .todo-item-expanded {
+            transform: rotate(90deg);
+            transition: transform 0.1s ease
+        }
+    
+        .todo-item-title {
+            margin: 0 10px;
+        }
+    
+        .todo-item-action-btn {
+            margin-right: 10px;
+        }
+    }
+
+    .todo-item-children {
+        margin-left: 20px;
+    }
+}

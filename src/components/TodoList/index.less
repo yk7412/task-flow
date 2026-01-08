@@ -1,0 +1,41 @@
+
+.todo-list {
+    box-sizing: border-box;
+    height: 100%;
+    margin: 0 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+
+    .todo-list-box {
+        flex: 1;
+        display: flex;
+
+        .todo-list-left {
+            flex: 1.5;
+        }
+
+        .todo-list-center {
+            flex: 6;
+            margin: 0 20px;
+            padding: 0 10px;
+            border-left: 1px #e3e3e3 solid;
+            border-right: 1px #e3e3e3 solid;
+
+            .todo-list-center-top {
+                // width: 100%;
+                display: flex;
+
+                .todo-input-group {
+                    flex: 1;
+                }
+            }
+        }
+
+        .todo-list-right {
+            flex: 2.5;
+        }
+    }
+
+    
+}
