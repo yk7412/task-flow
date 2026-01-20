@@ -3,20 +3,17 @@ import { useEffect, useState } from "react"
 import dayjs from "dayjs"
 import { getPriorityColor } from "../../utils/common"
 import './TodoItemDetail.less'
-import type { Task, TodoState } from "../../store/todoSlice"
+import type { Task } from "../../store/todoSlice"
 import TagSelect from "./TagSelect"
+import type { TodoListProps } from "."
 
-interface TodoItemDetailProps {
-    focusId: number | null
-    taskList: Task[]
+interface TodoItemDetailProps extends Pick<TodoListProps, 'mode' | 'taskList' | 'tagList' | 'focusId' | 'priorityList'> {
     updateTask: (id: number | null, value: Partial<Task>) => void
-    tagList: TodoState['tagList']
-    priorityList: TodoState['priorityList']
     updateTagList: (tagList: string[]) => void
 }
 
 const TodoItemDetail = (props: TodoItemDetailProps) => {
-    const { focusId, taskList, updateTask, tagList, priorityList, updateTagList } = props
+    const { focusId, taskList, updateTask, tagList, priorityList, updateTagList, mode } = props
     const [form] = Form.useForm()
 
     const [isFirstChange, setIsFirstChange] = useState(true)
@@ -53,13 +50,21 @@ const TodoItemDetail = (props: TodoItemDetailProps) => {
                 <Form.Item className='todo-item-detail-title' name='title' >
                     <Input />
                 </Form.Item>
-                <Form.Item className='todo-item-detail-completed' name='completed' >
+                {mode === 'todo' && <Form.Item className='todo-item-detail-completed' name='completed' >
                     <Switch
                         disabled={false}
                         checkedChildren='已完成'
                         unCheckedChildren='未完成'
                     />
-                </Form.Item>
+                </Form.Item>}
+                {mode === 'material' && <Form.Item className="todo-item-detail-repeatType" name='repeatType' label='重复类型' >
+                    <Select
+                        options={[
+                            {label: '一次性', value: 1},
+                            {label: '循环', value: 0}
+                        ]}
+                    />
+                </Form.Item>}
                 <Form.Item className='todo-item-detail-createTime' name='createTime' label='创建时间' >
                     <Form.Item noStyle shouldUpdate >
                         {({ getFieldValue }) => <span>{getFieldValue('createTime')}</span>}

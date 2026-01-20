@@ -6,17 +6,7 @@ import TodoItemDetail from "./TodoItemDetail"
 import type { AddTaskProps, Preferences, Task, TodoState } from "../../store/todoSlice"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootStore } from "../../store"
-import {
-    // addTask as addTaskReducer,
-    // toggleTaskCompleted as toggleTaskCompletedReducer,
-    // updateTask as updateTaskReducer,
-    // removeTask as removeTaskReducer,
-    moveTask as moveTaskReducer,
-    // setFocusId as setFocusIdReducer,
-    // updateTagList as updateTagListReducer,
-    // toggleTaskExpand as toggleTaskExpandReducer,
-    // updatePreferences
-} from "../../store/todoSlice"
+import { moveTask as moveTaskReducer } from "../../store/todoSlice"
 import { getAllChildIds } from "../../utils/common"
 import { Button, message } from "antd"
 import PreferencesModal from "./PreferencesModal"
@@ -211,7 +201,7 @@ interface TaskTreeItem extends Task {
     children: Task[]
 }
 
-interface TodoListProps {
+export interface TodoListProps {
     actions: {
         addTask: (props: AddTaskProps) => void,
         toggleTaskCompleted: (id: number, checked: boolean) => void,
@@ -232,6 +222,8 @@ interface TodoListProps {
     priorityList: TodoState['priorityList']
     /** 偏好配置 */
     preferences: TodoState['preferences']
+    /** 组件模式 todo-任务列表 material-素材库 */
+    mode?: 'todo' | 'material'
 }
 
 function TodoList(props: TodoListProps) {
@@ -242,7 +234,8 @@ function TodoList(props: TodoListProps) {
         focusId,
         tagList,
         priorityList,
-        preferences
+        preferences,
+        mode = 'todo'
     } = props
 
     // 初始化拖拽功能
@@ -329,6 +322,7 @@ function TodoList(props: TodoListProps) {
                                 toggleTaskExpand={actions.toggleTaskExpand}
                                 preferences={preferences}
                                 taskList={taskList}
+                                mode={mode}
                             />
                         ))}
                     </div>
@@ -341,6 +335,7 @@ function TodoList(props: TodoListProps) {
                         tagList={tagList}
                         priorityList={priorityList}
                         updateTagList={actions.updateTagList}
+                        mode={mode}
                     />
                 </div>
             </div>

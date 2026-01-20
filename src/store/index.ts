@@ -2,6 +2,7 @@ import { configureStore, type Middleware } from '@reduxjs/toolkit'
 import todoReducer from './todoSlice'
 import materialLibraryReducer from './materialLibrarySlice'
 
+/** 初始化redux仓库数据 */
 const preloadedState = (): Partial<{ todo: any }> => {
     const state = localStorage.getItem('task_flow_state')
     if (!state) return {};
@@ -13,6 +14,7 @@ const preloadedState = (): Partial<{ todo: any }> => {
     }
 }
 
+/** 防抖函数 */
 const throttle = (fn: (props?: any) => void, delay: number = 1000) => {
     let timeout: number | undefined;
     return (...argus: any) => {
@@ -26,14 +28,17 @@ const throttle = (fn: (props?: any) => void, delay: number = 1000) => {
     }
 }
 
+/** redux中间件，action执行完成后运行自定义逻辑 */
 const middleware: Middleware = store => next => action => {
     const result = next(action)
+    /** 缓存redux数据到本地localstorage */
     stateSaveToLocalStorage(store.getState())
     return result
 }
 
+/** 存储redux数据到本地 */
 const stateSaveToLocalStorage = throttle((state: any) => {
-    const payload = { todo: state.todo }
+    const payload = { todo: state.todo, materialLibrary: state.materialLibrary }
     const stateString = JSON.stringify(payload)
     localStorage.setItem('task_flow_state', stateString)
 })

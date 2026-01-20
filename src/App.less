@@ -8,12 +8,19 @@ body {
 }
 
 .App {
-    
+    display: flex;
+    flex-direction: column;
+
     .task-flow-content {
         display: flex;
+        flex: 1;
 
         .task-flow-content-right {
             flex: 1;    
+
+            .home, .material-library {
+                height: 100%;
+            }
         }
     }
 }

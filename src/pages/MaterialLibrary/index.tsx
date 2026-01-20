@@ -47,6 +47,7 @@ const MaterialLibrary = () => {
             tagList={tagList}
             priorityList={priorityList}
             preferences={preferences}
+            mode='material'
         />
     </div>
 }

@@ -3,8 +3,9 @@ import './TodoItem.less'
 import { getAllChildIds, getPriorityColor } from "../../utils/common";
 import type { AddTaskProps, Preferences, Task } from '../../store/todoSlice';
 import { HolderOutlined, RightOutlined } from '@ant-design/icons';
+import type { TodoListProps } from '.';
 
-interface TodoItemProps {
+interface TodoItemProps extends Pick<TodoListProps, 'mode' | 'taskList'> {
   task: Task,
   taskIds: number[]
   toggleTaskCompleted: (id: number, checked: boolean) => void
@@ -15,7 +16,6 @@ interface TodoItemProps {
   taskItemHandleMouseDown: (id: number) => void
   toggleTaskExpand: (id: number, expand: boolean) => void
   preferences: Preferences
-  taskList: Task[]
 }
 
 const actionMenu: MenuProps['items'] = [
@@ -37,7 +37,8 @@ const TodoItem = (props: TodoItemProps) => {
     taskItemHandleMouseDown,
     toggleTaskExpand,
     preferences,
-    taskList
+    taskList,
+    mode
   } = props;
 
   const actionMenuOnClick = (key: string, task: Task) => {
@@ -73,7 +74,7 @@ const TodoItem = (props: TodoItemProps) => {
         className='todo-item-icon todo-item-drag-handle'
         onMouseDown={() => taskItemHandleMouseDown(task.id)}
       />
-      <Checkbox checked={task.completed} onChange={(event) => {
+      {mode === 'todo' && <Checkbox checked={task.completed} onChange={(event) => {
         if (preferences.confirmInCompleteSubtasks && event.target.checked) {
           const ids = getAllChildIds(task.id, taskList).filter(id => id !== task.id)
           const childList = taskList.filter(item => ids.includes(item.id) && item.completed === false)
@@ -91,7 +92,7 @@ const TodoItem = (props: TodoItemProps) => {
         } else {
           toggleTaskCompleted(task.id, event.target.checked)
         }
-      }} />
+      }} />}
       <Input
         id={String(task.id)}
         prefix={<div style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: getPriorityColor(task.priority) }} ></div>}
@@ -134,6 +135,7 @@ const TodoItem = (props: TodoItemProps) => {
           toggleTaskExpand={toggleTaskExpand}
           preferences={preferences}
           taskList={taskList}
+          mode={mode}
         />
       })}
     </div>}
