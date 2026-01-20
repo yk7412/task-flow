@@ -1,5 +1,6 @@
 import {configureStore, type Middleware} from '@reduxjs/toolkit'
 import todoReducer from './todoSlice'
+import materialLibraryReducer from './materialLibrarySlice'
 
 const preloadedState = (): Partial<{todo: any}> => {
     const state = localStorage.getItem('task_flow_state')
@@ -39,7 +40,9 @@ const stateSaveToLocalStorage = throttle((state: any) => {
 
 const store = configureStore({
     reducer: {
-        todo: todoReducer
+        todo: todoReducer,
+        materialLibrary: materialLibraryReducer
+        
     },
     preloadedState: preloadedState(),
     middleware: getDefaultMiddleware => getDefaultMiddleware().concat(middleware)

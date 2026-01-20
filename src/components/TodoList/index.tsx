@@ -3,19 +3,19 @@ import TodoItem from "./TodoItem"
 import AddInput from "./InputGroup"
 import './index.less'
 import TodoItemDetail from "./TodoItemDetail"
-import type { AddTaskProps, Preferences, Task } from "../../store/todoSlice"
+import type { AddTaskProps, Preferences, Task, TodoState } from "../../store/todoSlice"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootStore } from "../../store"
 import {
-    addTask as addTaskReducer,
-    toggleTaskCompleted as toggleTaskCompletedReducer,
-    updateTask as updateTaskReducer,
-    removeTask as removeTaskReducer,
+    // addTask as addTaskReducer,
+    // toggleTaskCompleted as toggleTaskCompletedReducer,
+    // updateTask as updateTaskReducer,
+    // removeTask as removeTaskReducer,
     moveTask as moveTaskReducer,
-    setFocusId as setFocusIdReducer,
-    updateTagList as updateTagListReducer,
-    toggleTaskExpand as toggleTaskExpandReducer,
-    updatePreferences
+    // setFocusId as setFocusIdReducer,
+    // updateTagList as updateTagListReducer,
+    // toggleTaskExpand as toggleTaskExpandReducer,
+    // updatePreferences
 } from "../../store/todoSlice"
 import { getAllChildIds } from "../../utils/common"
 import { Button, message } from "antd"
@@ -211,22 +211,51 @@ interface TaskTreeItem extends Task {
     children: Task[]
 }
 
-function TodoList() {
-
+interface TodoListProps {
+    actions: {
+        addTask: (props: AddTaskProps) => void,
+        toggleTaskCompleted: (id: number, checked: boolean) => void,
+        updateTask: (id: number | null, value: Partial<Task>) => void,
+        removeTask: (id: number) => void,
+        toggleTaskExpand: (id: number, expand: boolean) => void,
+        setFocusId: (id: number) => void,
+        preferencesOnChange: (changeValue: Partial<Preferences>) => void
+        updateTagList: (tagList: string[]) => void
+    }
     /** 任务列表 */
-    const taskList = useSelector((store: RootStore) => store.todo.taskList)
+    taskList: TodoState['taskList']
     /** 焦点任务Id */
-    const focusId = useSelector((store: RootStore) => store.todo.focusId)
+    focusId: TodoState['focusId']
     /** 标签选项列表 */
-    const tagList = useSelector((store: RootStore) => store.todo.tagList)
+    tagList: TodoState['tagList']
     /** 优先级选项列表 */
-    const priorityList = useSelector((store: RootStore) => store.todo.priorityList)
+    priorityList: TodoState['priorityList']
     /** 偏好配置 */
-    const preferences = useSelector((store: RootStore) => store.todo.preferences)
-    const dispatch = useDispatch()
+    preferences: TodoState['preferences']
+}
 
+function TodoList(props: TodoListProps) {
+
+    const {
+        actions,
+        taskList,
+        focusId,
+        tagList,
+        priorityList,
+        preferences
+    } = props
+
+    // const taskList = useSelector((store: RootStore) => store.todo.taskList)
+    // const focusId = useSelector((store: RootStore) => store.todo.focusId)
+    // const tagList = useSelector((store: RootStore) => store.todo.tagList)
+    // const priorityList = useSelector((store: RootStore) => store.todo.priorityList)
+    // const preferences = useSelector((store: RootStore) => store.todo.preferences)
+    // const dispatch = useDispatch()
+
+    // 初始化拖拽功能
     const { taskItemHandleMouseDown } = useTaskItemHandleDrag()
 
+    // 更新当前焦点任务
     useEffect(() => {
         if (focusId) {
             const dom = document.getElementById(String(focusId))
@@ -234,25 +263,36 @@ function TodoList() {
         }
     }, [focusId])
 
-    /**  */
-    const updateTagList = (tagList: string[]) => dispatch(updateTagListReducer(tagList))
-
+    /** 提取任务树中所有任务Id */
     const getTaskIdsFromTree = (taskTree: TaskTreeItem[]): number[] => {
+        // flatMap自动摊平次一级数组
         return taskTree.flatMap(task => {
             return [task.id, ...getTaskIdsFromTree(task.children || [])]
         })
     }
 
+    /** 任务树 */
     const taskTree = useMemo(() => {
+        /** 顶级任务列表 */
         const rootTaskList: TaskTreeItem[] = []
         const taskMap = new Map<number, TaskTreeItem>()
+        // 将所有任务项以id为索引添加到Map中
         taskList.forEach(task => {
             taskMap.set(task.id, { ...task, children: [] })
         })
         taskList.forEach(task => {
             if (task.parent === null) {
+                // 任务项没有parent（父任务），添加到rootTaskList作为任务树的顶级任务
                 rootTaskList.push(taskMap.get(task.id)!)
             } else {
+                /*
+                    有parent（父任务）的任务项
+                    将父任务从Map中提取出来，将任务加入父任务的children列表中
+                    因为复杂数据类型的引用关系
+                    Map中提取的父任务加入了子任务后
+                    rootTaskList任务树中对应的任务也就同步添加了子任务
+                    以此实现任务树的构建
+                */
                 const parent = taskMap.get(task.parent)
                 parent?.children.push(taskMap.get(task.id)!)
             }
@@ -260,38 +300,37 @@ function TodoList() {
         return rootTaskList
     }, [taskList])
 
+    /** 所有任务Id集合 */
     const taskIds = useMemo(() => getTaskIdsFromTree(taskTree), [taskTree])
 
-    function addTask({ title, parentId, brotherId, focus }: AddTaskProps) {
-        dispatch(addTaskReducer({ title, parentId, brotherId, focus }))
-    }
+    // function addTask({ title, parentId, brotherId, focus }: AddTaskProps) {
+    //     dispatch(addTaskReducer({ title, parentId, brotherId, focus }))
+    // }
 
-    function toggleTaskCompleted(id: number, checked: boolean) {
-        dispatch(toggleTaskCompletedReducer({ id, checked }))
-    }
+    // function toggleTaskCompleted(id: number, checked: boolean) {
+    //     dispatch(toggleTaskCompletedReducer({ id, checked }))
+    // }
 
-    function updateTask(id: number | null, value: Partial<Task>) {
-        if (!id) return
-        dispatch(updateTaskReducer({ id, value }))
-    }
+    // function updateTask(id: number | null, value: Partial<Task>) {
+    //     if (!id) return
+    //     dispatch(updateTaskReducer({ id, value }))
+    // }
 
+    // function removeTask(id: number) {
+    //     dispatch(removeTaskReducer({ id }))
+    // }
 
-    function removeTask(id: number) {
-        dispatch(removeTaskReducer({ id }))
-    }
+    // function toggleTaskExpand(id: number, expand: boolean) {
+    //     dispatch(toggleTaskExpandReducer({id, expand}))
+    // }
 
-    function toggleTaskExpand(id: number, expand: boolean) {
-        dispatch(toggleTaskExpandReducer({id, expand}))
-    }
+    // function setFocusId(id: number) {
+    //     dispatch(setFocusIdReducer(id))
+    // }
 
-    function setFocusId(id: number) {
-        dispatch(setFocusIdReducer(id))
-    }
-
-    function preferencesOnChange(changeValue: Partial<Preferences>) {
-        dispatch(updatePreferences(changeValue))
-    }
-
+    // function preferencesOnChange(changeValue: Partial<Preferences>) {
+    //     dispatch(updatePreferences(changeValue))
+    // }
 
     return (
         <div className="todo-list">
@@ -302,13 +341,13 @@ function TodoList() {
                         window.location.reload()
                     }} >清除数据</Button>
                     <div className="todo-list-center-top">
-                    <AddInput addTask={addTask} />
+                    <AddInput addTask={actions.addTask} />
                     <PreferencesModal
                         tagList={tagList}
                         priorityList={priorityList}
                         value={preferences}
-                        onChange={preferencesOnChange}
-                        updateTagList={updateTagList}
+                        onChange={actions.preferencesOnChange}
+                        updateTagList={actions.updateTagList}
                     />
                     </div>
                     <div className='todo-list-items' >
@@ -317,13 +356,13 @@ function TodoList() {
                                 key={task.id}
                                 task={task}
                                 taskIds={taskIds}
-                                toggleTaskCompleted={toggleTaskCompleted}
-                                updateTask={updateTask}
-                                removeTask={removeTask}
-                                addTask={addTask}
-                                setFocusId={setFocusId}
+                                toggleTaskCompleted={actions.toggleTaskCompleted}
+                                updateTask={actions.updateTask}
+                                removeTask={actions.removeTask}
+                                addTask={actions.addTask}
+                                setFocusId={actions.setFocusId}
                                 taskItemHandleMouseDown={taskItemHandleMouseDown}
-                                toggleTaskExpand={toggleTaskExpand}
+                                toggleTaskExpand={actions.toggleTaskExpand}
                                 preferences={preferences}
                                 taskList={taskList}
                             />
@@ -334,10 +373,10 @@ function TodoList() {
                     <TodoItemDetail
                         focusId={focusId}
                         taskList={taskList}
-                        updateTask={updateTask}
+                        updateTask={actions.updateTask}
                         tagList={tagList}
                         priorityList={priorityList}
-                        updateTagList={updateTagList}
+                        updateTagList={actions.updateTagList}
                     />
                 </div>
             </div>
