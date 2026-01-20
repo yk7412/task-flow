@@ -84,16 +84,16 @@ const useTaskItemHandleDrag = () => {
             const inputDom = document.getElementById(String(task.id))
             if (!dom || !inputDom) return
             const { top, bottom, left } = dom.getBoundingClientRect();
-            const {top: inputTop, bottom: inputBottom} = inputDom?.getBoundingClientRect()
+            const { top: inputTop, bottom: inputBottom } = inputDom?.getBoundingClientRect()
             result.push({
                 id: task.id,
                 top: top,
-                center:  (inputTop + inputBottom) / 2,
+                center: (inputTop + inputBottom) / 2,
                 bottom: bottom,
                 left,
                 title: task.title
             })
-            
+
         })
 
         setTaskCoordinateList(result)
@@ -129,7 +129,7 @@ const useTaskItemHandleDrag = () => {
 
         /** 拖拽功能鼠标移动回调 */
         const taskItemHandleMouseMove = (event: MouseEvent) => {
-            const {clientX, clientY} = event
+            const { clientX, clientY } = event
 
             /** 目标任务信息 */
             let closest: TargetInfo = {
@@ -142,11 +142,11 @@ const useTaskItemHandleDrag = () => {
             // 获取查找与鼠标指针垂直距离最小的任务
             taskCoordinateList.forEach(item => {
                 const dist = Math.abs(clientY - item.center)
-                if(dist < closest.dist) {
-                    closest = {id: item.id, dist, edge: 'brother', y: item.bottom}
+                if (dist < closest.dist) {
+                    closest = { id: item.id, dist, edge: 'brother', y: item.bottom }
                 }
             })
-            
+
             const inputDom = document.querySelector(`#todo-item-${closest.id} .ant-input-affix-wrapper`)
             if (!inputDom) return
             const { left, width } = inputDom.getBoundingClientRect()
@@ -168,10 +168,10 @@ const useTaskItemHandleDrag = () => {
         const taskItemHandleMouseUp = () => {
             const ids = getAllChildIds(sourceId, taskList)
             // 当目标任务为源任务的子任务时,取消拖拽操作并提示
-            if(!ids.includes(targetInfo.current?.id as number)) {
+            if (!ids.includes(targetInfo.current?.id as number)) {
                 // 更新任务位置
                 dispatch(moveTaskReducer({ sourceId, targetId: targetInfo.current?.id, edge: targetInfo.current?.edge }))
-            }else {
+            } else {
                 message.error('不能将父任务移动到子任务下')
             }
             // 重置目标任务/源任务/拖拽标示线/页面文字可选状态
@@ -245,13 +245,6 @@ function TodoList(props: TodoListProps) {
         preferences
     } = props
 
-    // const taskList = useSelector((store: RootStore) => store.todo.taskList)
-    // const focusId = useSelector((store: RootStore) => store.todo.focusId)
-    // const tagList = useSelector((store: RootStore) => store.todo.tagList)
-    // const priorityList = useSelector((store: RootStore) => store.todo.priorityList)
-    // const preferences = useSelector((store: RootStore) => store.todo.preferences)
-    // const dispatch = useDispatch()
-
     // 初始化拖拽功能
     const { taskItemHandleMouseDown } = useTaskItemHandleDrag()
 
@@ -303,35 +296,6 @@ function TodoList(props: TodoListProps) {
     /** 所有任务Id集合 */
     const taskIds = useMemo(() => getTaskIdsFromTree(taskTree), [taskTree])
 
-    // function addTask({ title, parentId, brotherId, focus }: AddTaskProps) {
-    //     dispatch(addTaskReducer({ title, parentId, brotherId, focus }))
-    // }
-
-    // function toggleTaskCompleted(id: number, checked: boolean) {
-    //     dispatch(toggleTaskCompletedReducer({ id, checked }))
-    // }
-
-    // function updateTask(id: number | null, value: Partial<Task>) {
-    //     if (!id) return
-    //     dispatch(updateTaskReducer({ id, value }))
-    // }
-
-    // function removeTask(id: number) {
-    //     dispatch(removeTaskReducer({ id }))
-    // }
-
-    // function toggleTaskExpand(id: number, expand: boolean) {
-    //     dispatch(toggleTaskExpandReducer({id, expand}))
-    // }
-
-    // function setFocusId(id: number) {
-    //     dispatch(setFocusIdReducer(id))
-    // }
-
-    // function preferencesOnChange(changeValue: Partial<Preferences>) {
-    //     dispatch(updatePreferences(changeValue))
-    // }
-
     return (
         <div className="todo-list">
             <div className="todo-list-box">
@@ -341,14 +305,14 @@ function TodoList(props: TodoListProps) {
                         window.location.reload()
                     }} >清除数据</Button>
                     <div className="todo-list-center-top">
-                    <AddInput addTask={actions.addTask} />
-                    <PreferencesModal
-                        tagList={tagList}
-                        priorityList={priorityList}
-                        value={preferences}
-                        onChange={actions.preferencesOnChange}
-                        updateTagList={actions.updateTagList}
-                    />
+                        <AddInput addTask={actions.addTask} />
+                        <PreferencesModal
+                            tagList={tagList}
+                            priorityList={priorityList}
+                            value={preferences}
+                            onChange={actions.preferencesOnChange}
+                            updateTagList={actions.updateTagList}
+                        />
                     </div>
                     <div className='todo-list-items' >
                         {taskTree.map(task => (

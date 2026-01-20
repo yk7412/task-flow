@@ -1,10 +1,10 @@
-import {configureStore, type Middleware} from '@reduxjs/toolkit'
+import { configureStore, type Middleware } from '@reduxjs/toolkit'
 import todoReducer from './todoSlice'
 import materialLibraryReducer from './materialLibrarySlice'
 
-const preloadedState = (): Partial<{todo: any}> => {
+const preloadedState = (): Partial<{ todo: any }> => {
     const state = localStorage.getItem('task_flow_state')
-    if(!state) return {};
+    if (!state) return {};
     try {
         return JSON.parse(state)
     } catch (error) {
@@ -16,7 +16,7 @@ const preloadedState = (): Partial<{todo: any}> => {
 const throttle = (fn: (props?: any) => void, delay: number = 1000) => {
     let timeout: number | undefined;
     return (...argus: any) => {
-        if(timeout) {
+        if (timeout) {
             clearTimeout(timeout)
         }
         timeout = setTimeout(() => {
@@ -33,7 +33,7 @@ const middleware: Middleware = store => next => action => {
 }
 
 const stateSaveToLocalStorage = throttle((state: any) => {
-    const payload = {todo: state.todo}
+    const payload = { todo: state.todo }
     const stateString = JSON.stringify(payload)
     localStorage.setItem('task_flow_state', stateString)
 })
@@ -42,7 +42,7 @@ const store = configureStore({
     reducer: {
         todo: todoReducer,
         materialLibrary: materialLibraryReducer
-        
+
     },
     preloadedState: preloadedState(),
     middleware: getDefaultMiddleware => getDefaultMiddleware().concat(middleware)

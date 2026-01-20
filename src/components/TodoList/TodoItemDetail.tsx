@@ -22,7 +22,6 @@ const TodoItemDetail = (props: TodoItemDetailProps) => {
     const [isFirstChange, setIsFirstChange] = useState(true)
     const [formDisabled, setFormDisabled] = useState(false)
     const [currentId, setCurrentId] = useState<number | null>(null)
-    // const [inputTag, setInputTag] = useState<string>('')
 
     useEffect(() => {
         if (focusId === null) return
@@ -41,15 +40,6 @@ const TodoItemDetail = (props: TodoItemDetailProps) => {
     }, [focusId, taskList])
 
     const PriorityDot = (<div style={{ width: 5, height: 5 }} ></div>)
-
-    // const addNewTag = () => {
-    //     if (!inputTag) return
-    //     if (tagList.includes(inputTag)) {
-    //         return message.error('请勿添加重复标签')
-    //     }
-    //     addTag(inputTag)
-    //     setInputTag('')
-    // }
 
     return <div className="todo-item-detail">
         {isFirstChange ? <div className="todo-item-detail-empty" ></div> : (
@@ -95,36 +85,6 @@ const TodoItemDetail = (props: TodoItemDetailProps) => {
                         options={priorityList} />
                 </Form.Item>
                 <Form.Item className='todo-item-detail-tag' name='tag' label='标签' >
-                    {/* <Select
-                        mode='multiple'
-                        allowClear
-                        options={tagList.map(tag => ({ label: tag, value: tag }))}
-                        menuItemSelectedIcon={null}
-                        optionRender={option => (<Space style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }} >
-                            <span>{option.label}</span>
-                            <Button
-                                type='text'
-                                onClick={event => {
-                                    event.stopPropagation()
-                                    removeTag(option.value as string)
-                                }}
-                            >X</Button>
-                        </Space>)}
-                        popupRender={(menu) => (<>
-                            {menu}
-                            <Divider style={{ margin: '8px 0' }} />
-                            <Space>
-                                <Input
-                                    value={inputTag}
-                                    onChange={event => setInputTag(event.target.value)}
-                                    onKeyDown={event => event.key === 'Enter' && addNewTag()}
-                                />
-                                <Button
-                                    onClick={() => addNewTag()}
-                                >添加</Button>
-                            </Space>
-                        </>)}
-                    /> */}
                     <TagSelect
                         tagList={tagList}
                         updateTagList={updateTagList}

@@ -74,21 +74,21 @@ const TodoItem = (props: TodoItemProps) => {
         onMouseDown={() => taskItemHandleMouseDown(task.id)}
       />
       <Checkbox checked={task.completed} onChange={(event) => {
-        if(preferences.confirmInCompleteSubtasks && event.target.checked) {
+        if (preferences.confirmInCompleteSubtasks && event.target.checked) {
           const ids = getAllChildIds(task.id, taskList).filter(id => id !== task.id)
           const childList = taskList.filter(item => ids.includes(item.id) && item.completed === false)
-          if(childList.length) {
+          if (childList.length) {
             Modal.confirm({
               content: '该任务包含未完成的子任务，确定要完成吗',
               okText: '确认',
               cancelText: '取消',
               maskClosable: true,
-              onOk: () => {toggleTaskCompleted(task.id, event.target.checked)}
+              onOk: () => { toggleTaskCompleted(task.id, event.target.checked) }
             })
-          }else {
+          } else {
             toggleTaskCompleted(task.id, event.target.checked)
           }
-        }else {
+        } else {
           toggleTaskCompleted(task.id, event.target.checked)
         }
       }} />
@@ -106,15 +106,15 @@ const TodoItem = (props: TodoItemProps) => {
         <Button className="todo-item-action-btn" type='primary' size="small" >更多</Button>
       </Dropdown>
       <Button className="todo-item-delete-btn" type='dashed' danger={true} size='small' onClick={() => {
-        if(preferences.confirmBeforeDelete) {
+        if (preferences.confirmBeforeDelete) {
           Modal.confirm({
             content: '确定要删除该任务吗',
             okText: '确定',
             cancelText: '取消',
             maskClosable: true,
-            onOk: () => {removeTask(task.id)},
+            onOk: () => { removeTask(task.id) },
           })
-        }else {
+        } else {
           removeTask(task.id)
         }
       }} >删除</Button>
