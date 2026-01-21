@@ -9,8 +9,8 @@ const NavigationMenu = () => {
 
   const items: MenuItem[] = [
     {
-      key: 'TodoList',
-      label: <Link to='/' >TodoList</Link>
+      key: 'todoList',
+      label: <Link to='/' >任务列表</Link>
     },
     {
       key: 'materialLibrary',

@@ -5,53 +5,51 @@ import type { AddTaskProps, Preferences, Task } from '../../store/todoSlice';
 import { HolderOutlined, RightOutlined } from '@ant-design/icons';
 import type { TodoListProps } from '.';
 
-interface TodoItemProps extends Pick<TodoListProps, 'mode' | 'taskList'> {
+interface TodoItemProps extends Pick<TodoListProps, 'mode' | 'taskList' | 'actions'> {
   task: Task,
   taskIds: number[]
-  toggleTaskCompleted: (id: number, checked: boolean) => void
-  updateTask: (id: number, value: Partial<Task>) => void
-  removeTask: (id: number) => void
-  addTask: (value: AddTaskProps) => void
-  setFocusId: (id: number) => void
   taskItemHandleMouseDown: (id: number) => void
-  toggleTaskExpand: (id: number, expand: boolean) => void
   preferences: Preferences
 }
 
-const actionMenu: MenuProps['items'] = [
-  {
-    key: '1',
-    label: '添加子任务'
-  }
-]
 
 const TodoItem = (props: TodoItemProps) => {
   const {
     task,
     taskIds,
-    toggleTaskCompleted,
-    updateTask,
-    removeTask,
-    addTask,
-    setFocusId,
     taskItemHandleMouseDown,
-    toggleTaskExpand,
     preferences,
     taskList,
+    actions,
     mode
   } = props;
 
+  const actionMenu: MenuProps['items'] = [
+    {
+      key: '1',
+      label: '添加子任务'
+    },
+    ...(mode === 'material' ? [{
+      key: '2',
+      label: '添加到任务列表'
+    }] : [])
+  ]
+
   const actionMenuOnClick = (key: string, task: Task) => {
     if (key === '1') {
-      addTask({ title: '', parentId: task.id, focus: true })
+      actions.addTask({ title: '', parentId: task.id, focus: true })
     }
-
+  
+    if (key === '2') {
+      actions.addTaskToTodoList?.(task.id)
+    }
+  
   }
 
 
   const inputOnKeyDown = (task: Task, event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      addTask({ title: '', parentId: task.parent || null, brotherId: task.id, focus: true })
+      actions.addTask({ title: '', parentId: task.parent || null, brotherId: task.id, focus: true })
     } else if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
       const index = taskIds.findIndex(id => id === task.id)
       if (index < 0) return
@@ -59,7 +57,7 @@ const TodoItem = (props: TodoItemProps) => {
       const targetIndex = index + num
       const targetId = taskIds[targetIndex]
       if (targetIndex < 0 || targetIndex === index) return
-      setFocusId(targetId)
+      actions.setFocusId(targetId)
     }
   }
 
@@ -68,7 +66,7 @@ const TodoItem = (props: TodoItemProps) => {
     <div className="todo-item-task">
       <RightOutlined
         className={`todo-item-icon todo-item-expand-handle ${task.expand ? 'todo-item-expanded' : 'todo-item-collapsed'}`}
-        onClick={() => toggleTaskExpand(task.id, !task.expand)}
+        onClick={() => actions.toggleTaskExpand(task.id, !task.expand)}
       />
       <HolderOutlined
         className='todo-item-icon todo-item-drag-handle'
@@ -84,13 +82,13 @@ const TodoItem = (props: TodoItemProps) => {
               okText: '确认',
               cancelText: '取消',
               maskClosable: true,
-              onOk: () => { toggleTaskCompleted(task.id, event.target.checked) }
+              onOk: () => { actions.toggleTaskCompleted(task.id, event.target.checked) }
             })
           } else {
-            toggleTaskCompleted(task.id, event.target.checked)
+            actions.toggleTaskCompleted(task.id, event.target.checked)
           }
         } else {
-          toggleTaskCompleted(task.id, event.target.checked)
+          actions.toggleTaskCompleted(task.id, event.target.checked)
         }
       }} />}
       <Input
@@ -100,8 +98,8 @@ const TodoItem = (props: TodoItemProps) => {
         value={task.title}
         disabled={task.completed}
         onKeyDown={event => inputOnKeyDown(task, event)}
-        onChange={event => updateTask(task.id, { title: event.target.value })}
-        onFocus={() => setFocusId(task.id)}
+        onChange={event => actions.updateTask(task.id, { title: event.target.value })}
+        onFocus={() => actions.setFocusId(task.id)}
       />
       <Dropdown trigger={['click']} menu={{ items: actionMenu, onClick: event => actionMenuOnClick(event.key, task) }} >
         <Button className="todo-item-action-btn" type='primary' size="small" >更多</Button>
@@ -113,10 +111,10 @@ const TodoItem = (props: TodoItemProps) => {
             okText: '确定',
             cancelText: '取消',
             maskClosable: true,
-            onOk: () => { removeTask(task.id) },
+            onOk: () => { actions.removeTask(task.id) },
           })
         } else {
-          removeTask(task.id)
+          actions.removeTask(task.id)
         }
       }} >删除</Button>
     </div>
@@ -126,13 +124,8 @@ const TodoItem = (props: TodoItemProps) => {
           key={children.id}
           task={children}
           taskIds={taskIds}
-          toggleTaskCompleted={toggleTaskCompleted}
-          updateTask={updateTask}
-          removeTask={removeTask}
-          addTask={addTask}
-          setFocusId={setFocusId}
+          actions={actions}
           taskItemHandleMouseDown={taskItemHandleMouseDown}
-          toggleTaskExpand={toggleTaskExpand}
           preferences={preferences}
           taskList={taskList}
           mode={mode}

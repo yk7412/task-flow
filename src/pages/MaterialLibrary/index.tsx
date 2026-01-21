@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux"
-import TodoList from "../../components/TodoList"
+import TodoList, { type TodoListProps } from "../../components/TodoList"
 import type { RootStore } from "../../store"
-import type { AddTaskProps, Preferences, Task } from "../../store/todoSlice"
+import { addTasksBatch, removeTask, type AddTaskProps, type Preferences, type Task } from "../../store/todoSlice"
 import {
     addTask as addTaskReducer,
     toggleTaskCompleted as toggleTaskCompletedReducer,
@@ -13,12 +13,13 @@ import {
     toggleTaskExpand as toggleTaskExpandReducer,
     updatePreferences
 } from "../../store/materialLibrarySlice"
+import { getAllChildIds } from "../../utils/common"
 
 const MaterialLibrary = () => {
     const dispatch = useDispatch()
 
     /** 任务列表 */
-    const taskList = useSelector((store: RootStore) => store.materialLibrary.taskList)
+    const materialList = useSelector((store: RootStore) => store.materialLibrary.taskList)
     /** 焦点任务Id */
     const focusId = useSelector((store: RootStore) => store.materialLibrary.focusId)
     /** 标签选项列表 */
@@ -28,7 +29,21 @@ const MaterialLibrary = () => {
     /** 偏好配置 */
     const preferences = useSelector((store: RootStore) => store.materialLibrary.preferences)
 
-    const actions = {
+    const addTaskToTodoList: TodoListProps['actions']['addTaskToTodoList'] = (id) => {
+        /** 当前任务极其子任务id集合 */
+        const ids = getAllChildIds(id, materialList)
+        /** 当前任务极其子任务 */
+        const tasks = materialList.filter(task => ids.includes(task.id))
+        console.log(id, tasks)
+        dispatch(addTasksBatch({tasks, sourceId: id}))
+
+        const sourceTask = materialList.find(task => task.id === id)
+        if(sourceTask?.repeatType === 1) {
+            dispatch(removeTaskReducer({id}))
+        }
+    }
+
+    const actions: TodoListProps['actions'] = {
         addTask: (props: AddTaskProps) => dispatch(addTaskReducer(props)),
         toggleTaskCompleted: (id: number, checked: boolean) => dispatch(toggleTaskCompletedReducer({ id, checked })),
         updateTask: (id: number | null, value: Partial<Task>) => dispatch(updateTaskReducer({ id, value })),
@@ -36,13 +51,14 @@ const MaterialLibrary = () => {
         toggleTaskExpand: (id: number, expand: boolean) => dispatch(toggleTaskExpandReducer({ id, expand })),
         setFocusId: (id: number) => dispatch(setFocusIdReducer(id)),
         preferencesOnChange: (changeValue: Partial<Preferences>) => dispatch(updatePreferences(changeValue)),
-        updateTagList: (tagList: string[]) => dispatch(updateTagListReducer(tagList))
+        updateTagList: (tagList: string[]) => dispatch(updateTagListReducer(tagList)),
+        addTaskToTodoList
     }
 
     return <div className="material-library">
         <TodoList
             actions={actions}
-            taskList={taskList}
+            taskList={materialList}
             focusId={focusId}
             tagList={tagList}
             priorityList={priorityList}

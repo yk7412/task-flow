@@ -211,6 +211,7 @@ export interface TodoListProps {
         setFocusId: (id: number) => void,
         preferencesOnChange: (changeValue: Partial<Preferences>) => void
         updateTagList: (tagList: string[]) => void
+        addTaskToTodoList?: (id: number) => void
     }
     /** 任务列表 */
     taskList: TodoState['taskList']
@@ -313,13 +314,8 @@ function TodoList(props: TodoListProps) {
                                 key={task.id}
                                 task={task}
                                 taskIds={taskIds}
-                                toggleTaskCompleted={actions.toggleTaskCompleted}
-                                updateTask={actions.updateTask}
-                                removeTask={actions.removeTask}
-                                addTask={actions.addTask}
-                                setFocusId={actions.setFocusId}
+                                actions={actions}
                                 taskItemHandleMouseDown={taskItemHandleMouseDown}
-                                toggleTaskExpand={actions.toggleTaskExpand}
                                 preferences={preferences}
                                 taskList={taskList}
                                 mode={mode}

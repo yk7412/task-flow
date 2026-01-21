@@ -2,14 +2,13 @@
 .todo-list {
     box-sizing: border-box;
     height: 100%;
-    margin: 0 10px;
-    padding: 20px;
     display: flex;
     flex-direction: column;
 
     .todo-list-box {
         flex: 1;
         display: flex;
+        min-height: 0;
 
         .todo-list-left {
             flex: 1.5;
@@ -22,13 +21,20 @@
             border-left: 1px #e3e3e3 solid;
             border-right: 1px #e3e3e3 solid;
 
+            display: flex;
+            flex-direction: column;
+
             .todo-list-center-top {
-                // width: 100%;
                 display: flex;
 
                 .todo-input-group {
                     flex: 1;
                 }
+            }
+
+            .todo-list-items {
+                flex: 1;
+                overflow-y: auto;
             }
         }
 

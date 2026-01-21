@@ -233,6 +233,44 @@ export const todoSliceReducer: Reducers = {
         const changeValue: Partial<Preferences> = action.payload
         if (!changeValue) return
         Object.assign(state.preferences, changeValue)
+    },
+    addTasksBatch: (state, action) => {
+
+        if (!action.payload || !action.payload.tasks?.length || !action.payload.sourceId) return
+
+        /** 需要添加的任务列表 */
+        const tasks: Task[] = action.payload.tasks
+        /** 选中任务Id */
+        const sourceId: number = action.payload.sourceId
+
+
+        let startId = state.taskList.reduce((id, item) => Math.max(id, item.id), 0) + 1
+        const newIdMap: { [key: number]: number } = {}
+        tasks.forEach(task => {
+            newIdMap[task.id] = startId++
+        })
+
+        const nowDate = Date.now()
+        const newTasks: Task[] = tasks.map(task => {
+
+            let newParentId = null
+            if (task.id !== sourceId && task.parent !== null && newIdMap[task.parent]) {
+                newParentId = newIdMap[task.parent]
+            }
+
+            return {
+                ...task,
+                id: newIdMap[task.id],
+                parent: newParentId,
+                createTime: nowDate,
+                updateTime: nowDate,
+                completed: false,
+                hidden: false,
+                expand: !!task.expand
+            }
+        })
+
+        state.taskList.push(...newTasks)
     }
 }
 
@@ -274,6 +312,7 @@ export const {
     setFocusId,
     updateTagList,
     toggleTaskExpand,
-    updatePreferences
+    updatePreferences,
+    addTasksBatch
 } = todoSlice.actions
 export default todoSlice.reducer

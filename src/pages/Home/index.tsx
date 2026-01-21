@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import TodoList from "../../components/TodoList"
+import TodoList, { type TodoListProps } from "../../components/TodoList"
 import type { RootStore } from "../../store"
 import {
     addTask as addTaskReducer,
@@ -30,7 +30,7 @@ const Home = () => {
     /** 偏好配置 */
     const preferences = useSelector((store: RootStore) => store.todo.preferences)
 
-    const actions = {
+    const actions: TodoListProps['actions'] = {
         addTask: (props: AddTaskProps) => dispatch(addTaskReducer(props)),
         toggleTaskCompleted: (id: number, checked: boolean) => dispatch(toggleTaskCompletedReducer({ id, checked })),
         updateTask: (id: number | null, value: Partial<Task>) => dispatch(updateTaskReducer({ id, value })),
