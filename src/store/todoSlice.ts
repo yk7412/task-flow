@@ -28,6 +28,10 @@ export interface Task {
     children: Task[]
     /** 重复类型 0-循环 1-一次性 */
     repeatType: 0 | 1
+    /** 截止日期 */
+    deadline?: number
+    /** 完成时间 */
+    completedTime?: number
 }
 
 /** 偏好配置 */
@@ -284,13 +288,16 @@ const reducers: Reducers = {
         if (task) {
             task.completed = checked
             task.updateTime = Date.now()
+            task.completedTime = checked ? Date.now() : undefined
 
             // 同步更新所有子任务状态
             const ids = getAllChildIds(task.id, state.taskList).filter(taskId => taskId !== task.id)
             if (!ids.length) return
             state.taskList.forEach(item => {
-                if (ids.includes(item.id)) {
+                if (ids.includes(item.id) && item.completed !== checked) {
                     item.completed = checked
+                    item.updateTime = Date.now()
+                    item.completedTime = checked ? Date.now() : undefined
                 }
             })
         }

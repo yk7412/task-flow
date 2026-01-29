@@ -1,4 +1,4 @@
-import { Form, Input, Select, Switch } from "antd"
+import { DatePicker, Form, Input, Select, Switch } from "antd"
 import { useEffect, useState } from "react"
 import dayjs from "dayjs"
 import { getPriorityColor } from "../../utils/common"
@@ -31,7 +31,9 @@ const TodoItemDetail = (props: TodoItemDetailProps) => {
             tag: task.tag || null,
             remark: task.remark || null,
             createTime: task.createTime ? dayjs(task.createTime).format('YYYY-MM-DD HH:mm:ss') : null,
-            updateTime: task.updateTime ? dayjs(task.updateTime).format('YYYY-MM-DD HH:mm:ss') : null
+            // updateTime: task.updateTime ? dayjs(task.updateTime).format('YYYY-MM-DD HH:mm:ss') : null,
+            completedTime: task.completedTime ? dayjs(task.completedTime).format('YYYY-MM-DD HH:mm:ss') : '--',
+            deadline: task.deadline || null
         })
         setFormDisabled(task.completed)
     }, [focusId, taskList])
@@ -70,9 +72,17 @@ const TodoItemDetail = (props: TodoItemDetailProps) => {
                         {({ getFieldValue }) => <span>{getFieldValue('createTime')}</span>}
                     </Form.Item>
                 </Form.Item>
-                <Form.Item className='todo-item-detail-updateTime' name='updateTime' label='修改时间' >
+                {/* <Form.Item className='todo-item-detail-updateTime' name='updateTime' label='修改时间' >
                     <Form.Item noStyle shouldUpdate >
                         {({ getFieldValue }) => <span>{getFieldValue('updateTime')}</span>}
+                    </Form.Item>
+                </Form.Item> */}
+                <Form.Item className='todo-item-detail-deadline' name='deadline' label='截止日期' >
+                    <DatePicker placement='topLeft' showNow={false} />
+                </Form.Item>
+                <Form.Item className='todo-item-detail-completedTime' name='completedTime' label='完成时间' >
+                    <Form.Item noStyle shouldUpdate >
+                        {({ getFieldValue }) => <span>{getFieldValue('completedTime')}</span>}
                     </Form.Item>
                 </Form.Item>
                 <Form.Item className='todo-item-detail-priority' name='priority' label='优先级' >

@@ -96,7 +96,9 @@ const TodoItem = (props: TodoItemProps) => {
         prefix={<div style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: getPriorityColor(task.priority) }} ></div>}
         className="todo-item-title"
         value={task.title}
-        disabled={task.completed}
+        // disabled={task.completed}
+        style={task.completed ? {background: '#f5f5f5', color: '#b8b8b8'} : {}}
+        readOnly={task.completed}
         onKeyDown={event => inputOnKeyDown(task, event)}
         onChange={event => actions.updateTask(task.id, { title: event.target.value })}
         onFocus={() => actions.setFocusId(task.id)}
