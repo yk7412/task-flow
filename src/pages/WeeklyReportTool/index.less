@@ -1,19 +1,33 @@
 
+.weekly-report-tool, .weekly-report-tool-preview, .weekly-report-tool-configuration {
+    box-sizing: border-box;
+    padding: 20px;
+    height: 100%;
+}
 .weekly-report-tool {
-    .weekly-report-tool-date {
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+    display: flex;
 
-            
-            .ant-badge-status {
-                width: 100%;
-                overflow: hidden;
-                font-size: 12px;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-            }
+    .weekly-report-tool-preview {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        >textarea {
+            flex: 1;
+        }
+    }
+
+    .line {
+        height: 100%;
+        border-right: 1px solid #000;
+    }
+
+    .weekly-report-tool-configuration {
+        max-width: 400px;
+
+        .configuration-date {
+            display: flex;
+            justify-content: space-around;
         }
     }
 }

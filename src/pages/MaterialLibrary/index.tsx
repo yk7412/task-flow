@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux"
 import TodoList, { type TodoListProps } from "../../components/TodoList"
 import type { RootStore } from "../../store"
-import { addTasksBatch, removeTask, type AddTaskProps, type Preferences, type Task } from "../../store/todoSlice"
+import { addTasksBatch, type AddTaskProps, type Preferences, type Task } from "../../store/todoSlice"
 import {
     addTask as addTaskReducer,
     toggleTaskCompleted as toggleTaskCompletedReducer,

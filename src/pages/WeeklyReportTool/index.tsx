@@ -1,69 +1,74 @@
-import { Badge, Calendar } from "antd"
-import type { RootStore } from "../../store"
-import { useSelector } from "react-redux"
+import { Button, DatePicker, Input } from "antd"
 import type { Dayjs } from "dayjs"
 import dayjs from "dayjs"
 import './index.less'
+import { useState } from "react"
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
+
+type RangeValue = Dayjs | null | undefined
+const useGetWeekTime = () => {
+
+    const [date, setDate] = useState<[RangeValue, RangeValue]>([dayjs().startOf('week'), dayjs().endOf('week')])
+
+    /** 获取上周时间范围 */
+    const getLastWeek = () => {
+        setDate(date => {
+            const [startDate, endDate] = date
+            // @ts-ignore
+            const b = endDate.valueOf() - startDate.valueOf()
+            const c = (1000 * 60 * 60 * 24 * 7)
+            console.log(b, c, b === c, 'aaaa')
+            return [startDate?.subtract(7, 'day'), endDate?.subtract(7, 'day')]
+        })
+    }
+
+    /** 获取下周时间范围 */
+    const getNextWeek = () => {
+        setDate(date => {
+            const [startDate, endDate] = date
+            return [startDate?.add(7, 'day'), endDate?.add(7, 'day')]
+        })
+    }
+
+    /** 获取本周 */
+    const getThisWeek = () => {
+        setDate([dayjs().startOf('week'), dayjs().endOf('week')])
+    }
+
+    return {
+        date,
+        /** 获取上周时间范围 */
+        getLastWeek,
+        /** 获取下周时间范围 */
+        getNextWeek,
+        /** 获取本周时间范围 */
+        getThisWeek
+    }
+}
 
 const WeeklyReportTool = () => {
 
     /** 任务列表 */
-    const taskList = useSelector((store: RootStore) => store.todo.taskList)
+    // const taskList = useSelector((store: RootStore) => store.todo.taskList)
 
-    /** 获取任务列表中年份、月份、日期对应的任务 */
-    const getListData = (value: Dayjs, type: string) => {
-        return taskList.filter(task => {
-            if (!task.completedTime) {
-                return false
-            }
-            let result = false
-            const completedTime = dayjs(task.completedTime)
-            console.log(completedTime, 'completedTime')
-            if (type === 'date') {
-                if (
-                    value.year() === completedTime.year() &&
-                    value.month() === completedTime.month() &&
-                    value.date() === completedTime.date()
-                ) {
-                    result = true
-                } else {
-                    result = false
-                }
-            }
-
-            if (type === 'month') {
-                if (
-                    value.year() === completedTime.year() &&
-                    value.month() === completedTime.month()
-                ) {
-                    result = true
-                } else {
-                    result = false
-                }
-            }
-
-            return result
-
-        })
-    }
+    const {date, getLastWeek, getNextWeek, getThisWeek} = useGetWeekTime()
 
     return <div className="weekly-report-tool">
-        <Calendar
-            fullscreen={true}
-            cellRender={(current, info) => {
-                const list = getListData(current, info.type)
-                if (list.length) {
-                    return (<div className="weekly-report-tool-date" >
-                        <ul>
-                            {list.map(task => (<li key={'"weekly-report-tool-date-' + task.id}>
-                                <Badge status={'success'} text={task.title} />
-                            </li>))}
-                        </ul>
-                    </div>)
-                }
-                return <div></div>
-            }}
-        />
+        <div className="weekly-report-tool-preview">
+            <Input.TextArea/>
+        </div>
+        <div className="line"></div>
+        <div className="weekly-report-tool-configuration">
+            <h3>配置项</h3>
+            <div className="configuration-date">
+                <Button onClick={() => getLastWeek()} >{"<"}</Button>
+                <DatePicker.RangePicker value={date} />
+                <Button onClick={() => getNextWeek()} >{">"}</Button>
+                <Button onClick={() => getThisWeek()}>本周</Button>
+            </div>
+        </div>
     </div>
 }
 

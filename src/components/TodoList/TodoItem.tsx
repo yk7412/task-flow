@@ -1,7 +1,7 @@
 import { Button, Checkbox, Dropdown, Input, type MenuProps, Modal } from 'antd'
 import './TodoItem.less'
 import { getAllChildIds, getPriorityColor } from "../../utils/common";
-import type { AddTaskProps, Preferences, Task } from '../../store/todoSlice';
+import type { Preferences, Task } from '../../store/todoSlice';
 import { HolderOutlined, RightOutlined } from '@ant-design/icons';
 import type { TodoListProps } from '.';
 
