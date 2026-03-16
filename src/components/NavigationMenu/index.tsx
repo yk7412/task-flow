@@ -16,10 +16,10 @@ const NavigationMenu = () => {
       key: 'materialLibrary',
       label: <Link to='/material-library' >素材库</Link>
     },
-    {
-      key: 'weeklyReportTool',
-      label: <Link to='/weekly-report-tool' >周报工具</Link>
-    }
+    // {
+    //   key: 'weeklyReportTool',
+    //   label: <Link to='/weekly-report-tool' >周报工具</Link>
+    // }
   ];
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);

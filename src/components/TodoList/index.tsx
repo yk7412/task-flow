@@ -294,10 +294,10 @@ function TodoList(props: TodoListProps) {
         <div className="todo-list">
             <div className="todo-list-box">
                 <div className="todo-list-center">
-                    <Button onClick={() => {
+                    {/* <Button onClick={() => {
                         localStorage.removeItem('task_flow_state')
                         window.location.reload()
-                    }} >清除数据</Button>
+                    }} >清除数据</Button> */}
                     <div className="todo-list-center-top">
                         <AddInput addTask={actions.addTask} />
                         <PreferencesModal
