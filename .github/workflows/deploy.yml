@@ -2,7 +2,7 @@ name: 自动部署前端项目到 VPS
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 # 🚀 新增全局环境变量：按警告提示，显式告知 GitHub 底层直接强制使用 Node 24 引擎跑脚本
 env:
