@@ -7,7 +7,7 @@ import store from './store/index.ts'
 import 'dayjs/locale/zh-cn'
 import dayjs from 'dayjs'
 import { ConfigProvider } from 'antd'
-import zhCN from 'antd/locale/zh_cn'
+import zhCN from 'antd/locale/zh_CN'
 
 dayjs.locale('zh-cn')
 
