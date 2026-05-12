@@ -1,48 +1,40 @@
 name: 自动部署前端项目到 VPS
 
-# 触发条件：当代码推送到 main 分支时自动执行
 on:
   push:
-    branches: [ master ] 
-    # 如果你的主分支叫 master，请将上面的 main 改为 master
+    branches: [ main ]
+
+# 🚀 新增全局环境变量：按警告提示，显式告知 GitHub 底层直接强制使用 Node 24 引擎跑脚本
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest # 在 GitHub 免费提供的最新 Ubuntu 容器中运行
+    runs-on: ubuntu-latest
 
     steps:
-      # 1. 拉取仓库最新的源码
+      # 1. 升级 checkout 动作到 v4（官方 v4 最新子版本已兼容 Node 24 运行时环境）
       - name: 检出代码 (Checkout)
         uses: actions/checkout@v4
 
-      # 2. 安装并配置 Node.js 环境
+      # 2. 升级 setup-node 动作版本，并将项目构建 Node 对齐本地的 24 版本
       - name: 配置 Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4 # 官方 setup-node@v4 原生完美支持输出 Node 24
         with:
-          node-version: '20' # 推荐使用稳定的 Node 20，可按需调整
+          node-version: '24'        # 👉 从 20 修改为 24，完美对齐本地开发环境
 
-      # 3. 安装项目依赖
-      # 👉 注意：如果你项目使用的是 pnpm，请将下面的 npm install 改为相应的 pnpm 安装步骤
       - name: 安装依赖
         run: npm install
 
-      # 4. 执行静态打包构建
       - name: 项目打包构建
         run: npm run build
 
-      # 5. 将打包产物通过 SSH 免密同步到 VPS 服务器
       - name: 部署产物到服务器
         uses: easingthemes/ssh-deploy@main
         env:
-          # 读取你在 GitHub Secrets 中保存的私钥
           SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
-          # rsync 参数配置：-avzr 表示归档压缩传输，--delete 表示自动清理服务器上旧的废弃文件
           ARGS: "-avzr --delete"
-          # 本地打包输出的产物目录
-          # 👉 注意：Vite 默认是 dist/，Create React App 默认是 build/，请确保末尾带斜杠！
           SOURCE: "dist/"
-          # 读取远程服务器 IP 和 用户名
           REMOTE_HOST: ${{ secrets.VPS_HOST }}
           REMOTE_USER: ${{ secrets.VPS_USERNAME }}
-          # 目标机存放网页的绝对路径（我们在上一步已经在服务器端创建好的目录）
           TARGET: "/var/www/my-frontend"
