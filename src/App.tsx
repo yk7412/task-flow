@@ -9,7 +9,7 @@ const App = () => {
   return <div className="App">
     <BrowserRouter>
       <div className="task-flow-header">
-        <h1 style={{ margin: 0 }} >TaskFlow 自动化部署文本变更测试</h1>
+        <h1 style={{ margin: 0 }} >TaskFlow</h1>
       </div>
       <div className="task-flow-content">
         <div className="task-flow-content-left">
