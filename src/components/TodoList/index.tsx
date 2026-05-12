@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux"
 import type { RootStore } from "../../store"
 import { moveTask as moveTaskReducer } from "../../store/todoSlice"
 import { getAllChildIds } from "../../utils/common"
-import { Button, message } from "antd"
+import { message } from "antd"
 import PreferencesModal from "./PreferencesModal"
 
 /** 拖拽功能目标任务信息 */
